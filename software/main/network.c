@@ -1,3 +1,6 @@
 #include "network.h"
 
-bool network_init(void) { return true; }
+bool network_init(void)
+{
+    return true;
+}

@@ -7,9 +7,10 @@
 struct power_handle;
 
 /** Configuration structure to intialise power */
-struct power_config {
-  /** Currently unused field */
-  uint8_t reserved;
+struct power_config
+{
+    /** Currently unused field */
+    uint8_t reserved;
 };
 
 /**
