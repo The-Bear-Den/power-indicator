@@ -4,7 +4,7 @@
 #include "neopixel.h"
 
 #define TAG "indicator"
-#define PIXEL_COUNT 29
+#define PIXEL_COUNT CONFIG_POWER_INDICATOR_NUM_LED
 
 struct indicator_handle
 {
@@ -30,12 +30,12 @@ bool indicator_init(gpio_num_t data_pin)
     return true;
 }
 
-bool indicator_set_colour(uint8_t red, uint8_t green, uint8_t blue)
+bool indicator_set_colour(struct indicator_colour colour)
 {
     for (int ii = 0; ii < PIXEL_COUNT; ii++)
     {
         indicator.pixels[ii].index = ii;
-        indicator.pixels[ii].rgb = NP_RGB(red, green, blue);
+        indicator.pixels[ii].rgb = NP_RGB(colour.red, colour.green, colour.blue);
     };
 
     return neopixel_SetPixel(indicator.neopixel, indicator.pixels, PIXEL_COUNT);
