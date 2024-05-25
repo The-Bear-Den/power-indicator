@@ -1,2 +1,4 @@
 software/build
 software/sdkconfig
+software/sdkconfig.old
+.cache
