@@ -1,4 +1,5 @@
 software/build
+software/managed_components
 software/sdkconfig
 software/sdkconfig.old
 .cache

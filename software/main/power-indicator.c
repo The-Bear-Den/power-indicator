@@ -5,6 +5,7 @@
 #include "freertos/task.h"
 #include "nvs_flash.h"
 
+#include "indicator.h"
 #include "network.h"
 #include "power.h"
 
@@ -21,6 +22,7 @@ static void main_task(void *arg)
     {
         price = power_get_price(handle);
         ESP_LOGI(TAG, "Price $%.2f\n", price);
+        (void)indicator_set_colour(0xff, 0x00, 0x00);
         vTaskDelay(pdMS_TO_TICKS(UPDATE_RATE_MS));
     }
 }
@@ -44,6 +46,12 @@ void app_main(void)
     if (!ok)
     {
         ESP_LOGE(TAG, "network initialisation failed.");
+    }
+
+    ok = indicator_init(GPIO_NUM_2);
+    if (!ok)
+    {
+        ESP_LOGE(TAG, "indicator initialisation failed.");
     }
 
     power = power_init(&power_config);
