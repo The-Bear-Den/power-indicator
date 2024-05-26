@@ -18,3 +18,8 @@ double power_get_price(struct power_handle *handle)
 
     return 0.0;
 }
+
+enum power_price_descriptor power_get_price_descriptor(struct power_handle *handle)
+{
+    return POWER_PRICE_NEUTRAL;
+}
