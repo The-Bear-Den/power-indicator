@@ -29,7 +29,7 @@ static void main_task(void *arg)
     enum power_price_descriptor price_descriptor;
     while (1)
     {
-        price_descriptor = power_get_price_descriptor(handle);
+        price_descriptor = power_get_price_descriptor(handle, "price");
         ESP_LOGI(TAG, "Price descriptor %d\n", price_descriptor);
 
         if (price_descriptor < POWER_PRICE_NUM)
@@ -77,6 +77,9 @@ void app_main(void)
     {
         ESP_LOGE(TAG, "failed to initialise power module.");
     }
+
+    // Start the pricing fetch task
+    start_fetch_pricing_task();
 
     xTaskCreate(main_task, "main", 4096, &power, 3, NULL);
 }
