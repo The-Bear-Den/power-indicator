@@ -35,10 +35,6 @@ enum power_price_descriptor
  *
  * @return reference to an @ref power_handle on success, else @c NULL.
  */
-
-
-void start_fetch_pricing_task(void);
-
 struct power_handle *power_init(struct power_config *config);
 
 /**
@@ -48,6 +44,10 @@ struct power_handle *power_init(struct power_config *config);
  *
  * @return Current electricity price in dollars on success, @c DBL_MAX on error.
  */
-double power_get_price(struct power_handle *handle);
+// double power_get_price(struct power_handle *handle);
+
+char* fetch_site_id(void);
+double fetch_current_price(char* site_id);
+void test_request(void);
 
 enum power_price_descriptor power_get_price_descriptor(struct power_handle *handle, const char *descriptor);
