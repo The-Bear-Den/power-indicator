@@ -28,8 +28,7 @@ static void main_task(void *arg)
 
     while (1)
     {
-        test_request();
-        float price = 1.0;
+        double price = power_get_price(handle);
         enum power_price_descriptor price_descriptor = power_get_price_descriptor(handle, "price");
 
         if (price < 0) {
