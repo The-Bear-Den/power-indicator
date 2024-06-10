@@ -7,6 +7,7 @@
 #include "esp_log.h"
 #include "esp_tls.h"
 #include "cJSON.h"
+#include <stdlib.h>
 
 #define WEB_SERVER "www.api.amber.com.au"
 #define WEB_PORT "443"
@@ -213,10 +214,10 @@ exit:
     return result;
 }
 
-static double fetch_current_price(char* site_id) {
+static cJSON* fetch_json(char* site_id) {
     if (site_id == NULL) {
         ESP_LOGE(TAG, "Invalid site ID provided");
-        return -1.0;
+        return NULL;
     }
 
     char url[256];
@@ -228,12 +229,18 @@ static double fetch_current_price(char* site_id) {
     cJSON *json = cJSON_Parse(response);
     if (json == NULL) {
         ESP_LOGE(TAG, "Failed to parse response, possible rate limit hit");
-        return DBL_MAX;
+    } else {
+        ESP_LOGI(TAG, "Received JSON: %s", cJSON_Print(json));
     }
+    free(response); // Free response after parsing
+    return json;
+}
 
-    ESP_LOGI(TAG, "Received JSON: %s", cJSON_Print(json));
 
-    /* First item in the array is the purchase price and second is the sell price.*/
+static double fetch_current_price(char* site_id) {
+    cJSON *json = fetch_json(site_id);
+    if (json == NULL) return DBL_MAX;
+
     cJSON *firstItem = cJSON_GetArrayItem(json, 0);
     if (firstItem == NULL) {
         ESP_LOGE(TAG, "Failed to access first item of the price data");
@@ -249,11 +256,33 @@ static double fetch_current_price(char* site_id) {
     }
 
     double price = perKwhItem->valuedouble;
-
     ESP_LOGI(TAG, "Extracted perKwh value: %.2f", price);
 
     cJSON_Delete(json);
-    return price/100;
+    return price / 100;
+}
+
+static char* fetch_current_descriptor(char* site_id) {
+    cJSON *json = fetch_json(site_id);
+    if (json == NULL) return NULL;
+
+    cJSON *firstItem = cJSON_GetArrayItem(json, 0);
+    if (firstItem == NULL) {
+        ESP_LOGE(TAG, "Failed to access first item of the price data");
+        cJSON_Delete(json);
+        return NULL;
+    }
+
+    cJSON *descriptorItem = cJSON_GetObjectItem(firstItem, "descriptor");
+    if (descriptorItem == NULL || !cJSON_IsString(descriptorItem)) {
+        ESP_LOGE(TAG, "Descriptor field not found or invalid");
+        cJSON_Delete(json);
+        return NULL;
+    }
+
+    char* descriptor = strdup(descriptorItem->valuestring);
+    cJSON_Delete(json);
+    return descriptor; // Need to free this in the calling function
 }
 
 
@@ -278,6 +307,7 @@ double power_get_price(struct power_handle *handle)
 
 enum power_price_descriptor power_get_price_descriptor(struct power_handle *handle, const char *descriptor)
 {
+    if (strcmp(descriptor, "negative") == 0) return POWER_PRICE_NEGATIVE;
     if (strcmp(descriptor, "extremelyLow") == 0) return POWER_PRICE_EXTREME_LOW;
     if (strcmp(descriptor, "veryLow") == 0) return POWER_PRICE_VERY_LOW;
     if (strcmp(descriptor, "low") == 0) return POWER_PRICE_LOW;
