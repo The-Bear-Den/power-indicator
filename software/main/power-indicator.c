@@ -29,7 +29,7 @@ static void main_task(void *arg)
     while (1)
     {
         double price = power_get_price(handle);
-        enum power_price_descriptor price_descriptor = power_get_price_descriptor(handle, "price");
+        enum power_price_descriptor price_descriptor = power_get_price_descriptor(handle);
 
         if (price < 0) {
             ESP_LOGE(TAG, "Failed to fetch current price");

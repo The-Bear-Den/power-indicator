@@ -46,6 +46,6 @@ struct power_handle *power_init(struct power_config *config);
  */
 double power_get_price(struct power_handle *handle);
 
-void test_request(void);
+enum power_price_descriptor  power_get_price_descriptor(struct power_handle *handle);
 
-enum power_price_descriptor power_get_price_descriptor(struct power_handle *handle, const char *descriptor);
+void test_request(void);

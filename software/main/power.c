@@ -305,15 +305,31 @@ double power_get_price(struct power_handle *handle)
     return fetch_current_price(handle->site_id);
 }
 
-enum power_price_descriptor power_get_price_descriptor(struct power_handle *handle, const char *descriptor)
+enum power_price_descriptor power_get_price_descriptor(struct power_handle *handle)
 {
-    if (strcmp(descriptor, "negative") == 0) return POWER_PRICE_NEGATIVE;
-    if (strcmp(descriptor, "extremelyLow") == 0) return POWER_PRICE_EXTREME_LOW;
-    if (strcmp(descriptor, "veryLow") == 0) return POWER_PRICE_VERY_LOW;
-    if (strcmp(descriptor, "low") == 0) return POWER_PRICE_LOW;
-    if (strcmp(descriptor, "neutral") == 0) return POWER_PRICE_NEUTRAL;
-    if (strcmp(descriptor, "high") == 0) return POWER_PRICE_HIGH;
-    if (strcmp(descriptor, "spike") == 0) return POWER_PRICE_SPIKE;
+    char *descriptor = fetch_current_descriptor(handle->site_id);
+    if (descriptor == NULL) {
+        ESP_LOGE(TAG, "Failed to fetch descriptor");
+        return POWER_PRICE_NEUTRAL;  // Default if fetch fails
+    }
 
-    return POWER_PRICE_NEUTRAL; // Default if no match
+    enum power_price_descriptor result = POWER_PRICE_NEUTRAL;  // Default value
+    if (strcmp(descriptor, "negative") == 0) {
+        result = POWER_PRICE_NEGATIVE;
+    } else if (strcmp(descriptor, "extremelyLow") == 0) {
+        result = POWER_PRICE_EXTREME_LOW;
+    } else if (strcmp(descriptor, "veryLow") == 0) {
+        result = POWER_PRICE_VERY_LOW;
+    } else if (strcmp(descriptor, "low") == 0) {
+        result = POWER_PRICE_LOW;
+    } else if (strcmp(descriptor, "neutral") == 0) {
+        result = POWER_PRICE_NEUTRAL;
+    } else if (strcmp(descriptor, "high") == 0) {
+        result = POWER_PRICE_HIGH;
+    } else if (strcmp(descriptor, "spike") == 0) {
+        result = POWER_PRICE_SPIKE;
+    }
+
+    free(descriptor);
+    return result;
 }
