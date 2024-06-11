@@ -4,8 +4,6 @@
 #include "esp_tls.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_log.h"
-#include "esp_tls.h"
 #include "cJSON.h"
 #include <stdlib.h>
 
