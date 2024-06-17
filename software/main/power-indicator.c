@@ -9,7 +9,7 @@
 #include "network.h"
 #include "power.h"
 
-#define UPDATE_RATE_MS 5000
+#define UPDATE_RATE_MS 60000
 
 static const char *TAG = "power-indicator";
 

@@ -137,23 +137,17 @@ exit:
     return response;
 }
 
-char* https_get_response(const char* request) {
-    esp_tls_cfg_t cfg = {
+// Utility function to configure and return TLS settings.
+static esp_tls_cfg_t get_tls_config() {
+    return (esp_tls_cfg_t){
         .cacert_buf = (const unsigned char *) amber_dot_com_ca_pem_start,
-        .cacert_bytes = amber_dot_com_ca_pem_end - amber_dot_com_ca_pem_start,
+        .cacerv_bytes = amber_dot_com_ca_pem_end - amber_dot_com_ca_pem_start,
     };
-
-    return https_get_request(cfg, WEB_URL, request);
 }
 
-void test_request(void)
-{
-    esp_tls_cfg_t cfg = {
-        .cacert_buf = (const unsigned char *) amber_dot_com_ca_pem_start,
-        .cacert_bytes = amber_dot_com_ca_pem_end - amber_dot_com_ca_pem_start,
-    };
-
-    https_get_request(cfg, WEB_URL, AMBER_SSL_REQUEST);
+static char* https_get_response(const char* request) {
+    esp_tls_cfg_t cfg = get_tls_config();
+    return https_get_request(cfg, WEB_URL, request);
 }
 
 /**
@@ -234,7 +228,6 @@ static cJSON* fetch_json(char* site_id) {
     return json;
 }
 
-
 static double fetch_current_price(char* site_id) {
     cJSON *json = fetch_json(site_id);
     if (json == NULL) return DBL_MAX;
@@ -259,6 +252,15 @@ static double fetch_current_price(char* site_id) {
     cJSON_Delete(json);
     return price / 100;
 }
+
+/**
+ * Fetches the current descriptor from the power API for the given site ID.
+ *
+ * @param site_id The site ID for which to fetch the descriptor.
+ * @return Dynamically allocated string containing the descriptor.
+ *         The caller is responsible for freeing this memory using free().
+ */
+
 
 static char* fetch_current_descriptor(char* site_id) {
     cJSON *json = fetch_json(site_id);
