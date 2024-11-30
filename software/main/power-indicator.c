@@ -31,15 +31,21 @@ static void main_task(void *arg)
         double price = power_get_price(handle);
         enum power_price_descriptor price_descriptor = power_get_price_descriptor(handle);
 
-        if (price < 0) {
+        if (price < 0)
+        {
             ESP_LOGE(TAG, "Failed to fetch current price");
-        } else {
+        }
+        else
+        {
             ESP_LOGI(TAG, "Current Price: $%.2f, Price descriptor: %d", price, price_descriptor);
         }
 
-        if (price_descriptor < POWER_PRICE_NUM) {
+        if (price_descriptor < POWER_PRICE_NUM)
+        {
             indicator_set_colour(power_colours[price_descriptor]);
-        } else {
+        }
+        else
+        {
             indicator_set_colour(error_colour);
         }
 
@@ -55,24 +61,28 @@ void app_main(void)
     struct power_config power_config = {0};
 
     esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
 
     ok = network_init();
-    if (!ok) {
+    if (!ok)
+    {
         ESP_LOGE(TAG, "network initialisation failed.");
     }
 
     ok = indicator_init(CONFIG_POWER_INDICATOR_DATA_PIN);
-    if (!ok) {
+    if (!ok)
+    {
         ESP_LOGE(TAG, "indicator initialisation failed.");
     }
 
     power = power_init(&power_config);
-    if (!power) {
+    if (!power)
+    {
         ESP_LOGE(TAG, "failed to initialise power module.");
     }
 
