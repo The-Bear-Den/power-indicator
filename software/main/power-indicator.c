@@ -9,7 +9,7 @@
 #include "network.h"
 #include "power.h"
 
-#define UPDATE_RATE_MS 5000
+#define UPDATE_RATE_MS 60000
 
 static const char *TAG = "power-indicator";
 
@@ -26,15 +26,23 @@ static void main_task(void *arg)
 {
     struct power_handle *handle = (struct power_handle *)arg;
 
-    enum power_price_descriptor price_descriptor;
     while (1)
     {
-        price_descriptor = power_get_price_descriptor(handle);
-        ESP_LOGI(TAG, "Price descriptor %d\n", price_descriptor);
+        double price = power_get_price(handle);
+        enum power_price_descriptor price_descriptor = power_get_price_descriptor(handle);
+
+        if (price < 0)
+        {
+            ESP_LOGE(TAG, "Failed to fetch current price");
+        }
+        else
+        {
+            ESP_LOGI(TAG, "Current Price: $%.2f, Price descriptor: %d", price, price_descriptor);
+        }
 
         if (price_descriptor < POWER_PRICE_NUM)
         {
-            (void)indicator_set_colour(power_colours[price_descriptor]);
+            indicator_set_colour(power_colours[price_descriptor]);
         }
         else
         {
@@ -78,5 +86,5 @@ void app_main(void)
         ESP_LOGE(TAG, "failed to initialise power module.");
     }
 
-    xTaskCreate(main_task, "main", 4096, &power, 3, NULL);
+    xTaskCreate(main_task, "main", 8192, power, 3, NULL);
 }

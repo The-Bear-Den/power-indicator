@@ -15,3 +15,4 @@ BreakBeforeBinaryOperators: NonAssignment
 SpaceAfterCStyleCast: false
 SpacesBeforeTrailingComments: 1
 AlignTrailingComments: true
+IndentExternBlock: NoIndent
