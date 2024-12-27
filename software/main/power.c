@@ -14,14 +14,6 @@
 
 static const char *TAG = "HTTPS_REQUEST";
 
-/* Constants for the web server and the request */
-static const char AMBER_SSL_REQUEST[] = "GET " WEB_URL " HTTP/1.1\r\n"
-                                        "Host: " WEB_SERVER "\r\n"
-                                        "User-Agent: esp-idf/1.0 esp32\r\n"
-                                        "Authorization: Bearer " CONFIG_AMBER_API_KEY "\r\n"
-                                        "Connection: close\r\n"
-                                        "\r\n";
-
 #define AMBER_GET_REQUEST_FORMAT_STRING \
     "GET %s HTTP/1.1\r\n"               \
     "Authorization: Bearer %s\r\n"      \
@@ -160,7 +152,7 @@ static esp_tls_cfg_t get_tls_config()
 {
     return (esp_tls_cfg_t){
         .cacert_buf = (const unsigned char *)amber_dot_com_ca_pem_start,
-        .cacerv_bytes = amber_dot_com_ca_pem_end - amber_dot_com_ca_pem_start,
+        .cacert_bytes = amber_dot_com_ca_pem_end - amber_dot_com_ca_pem_start,
     };
 }
 
