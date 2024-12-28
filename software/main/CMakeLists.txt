@@ -1,4 +1,4 @@
-idf_component_register(SRCS "power-indicator.c"
+idf_component_register(SRCS "main.c"
                             "power.c"
                             "network.c"
                             "indicator.c"
