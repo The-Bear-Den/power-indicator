@@ -4,7 +4,8 @@
 #include <stdint.h>
 
 /** Enum for colour specifiers. */
-enum indicator_colour_specifier {
+enum indicator_colour_specifier
+{
     RED,
     GREEN,
     BLUE,
