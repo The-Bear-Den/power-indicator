@@ -83,11 +83,29 @@ menu "Power Indicator"
         help
             GPIO to use as a Data pin for ws2182b LED strip.
 
-    config POWER_INDICATOR_NUM_LED
-        int "Number of LEDs"
-        range 1 200
-        default 29
+    menu "LED Matrix Module Configuration"
+
+    config LED_MATRIX_WIDTH
+        int "Matrix Width"
+        range 1 32
+        default 8
         help
-            Number of ws2182b LEDs that are used as indicators.
+            Specify the width of the LED matrix in pixels. The valid range is 1 to 32.
+
+    config LED_MATRIX_HEIGHT
+        int "Matrix Height"
+        range 1 32
+        default 8
+        help
+            Specify the height of the LED matrix in pixels. The valid range is 1 to 32.
+
+    config LED_MATRIX_STATUS_SEGMENTS
+        int "Status Segments"
+        range 1 LED_MATRIX_WIDTH
+        default 4
+        help
+            Specify the number of status segments. This value cannot exceed the matrix width.
+
+    endmenu
 
 endmenu

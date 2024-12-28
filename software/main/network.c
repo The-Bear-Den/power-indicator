@@ -93,7 +93,7 @@ static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_
     }
 }
 
-void wifi_init_sta(void)
+static bool wifi_init_sta(void)
 {
     s_wifi_event_group = xEventGroupCreate();
 
@@ -146,6 +146,7 @@ void wifi_init_sta(void)
     {
         ESP_LOGI(TAG, "connected to ap SSID:%s password:%s", EXAMPLE_ESP_WIFI_SSID,
                  EXAMPLE_ESP_WIFI_PASS);
+        return true;
     }
     else if (bits & WIFI_FAIL_BIT)
     {
@@ -156,11 +157,12 @@ void wifi_init_sta(void)
     {
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
     }
+
+    return false;
 }
 
 bool network_init(void)
 {
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
-    wifi_init_sta();
-    return true;
+    return wifi_init_sta();
 }
