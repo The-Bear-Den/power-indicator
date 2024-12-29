@@ -3,12 +3,19 @@
 #include "driver/gpio.h"
 #include <stdint.h>
 
-/** Structure for specifiying RGB colour. */
-struct indicator_colour
+/** Enum for colour specifiers. */
+enum indicator_colour_specifier
 {
-    uint8_t red;   /**< Red element */
-    uint8_t green; /**< Green element */
-    uint8_t blue;  /**< Blue element */
+    RED,
+    GREEN,
+    BLUE,
+    YELLOW,
+    CYAN,
+    MAGENTA,
+    WHITE,
+    ORANGE,
+    PURPLE,
+    BLACK,
 };
 
 /**
@@ -27,4 +34,6 @@ bool indicator_init(gpio_num_t data_pin);
  *
  * @return @c true on is colour was successfully set, else @c false.
  */
-bool indicator_set_colour(struct indicator_colour colour);
+bool indicator_set_row(uint8_t row_idx, enum indicator_colour_specifier colour, uint8_t percent);
+
+bool indicator_set_status(uint8_t status_idx, enum indicator_colour_specifier colour);
