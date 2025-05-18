@@ -4,7 +4,8 @@
 #include "neopixel.h"
 
 #define TAG "indicator"
-#define BRIGHTNESS_DENOMINATOR 60
+#define FULL_BRIGHTNESS 10
+#define PARTIAL_BRIGHTNESS 2
 
 #define MATRIX_WIDTH CONFIG_LED_MATRIX_WIDTH
 #define MATRIX_HEIGHT CONFIG_LED_MATRIX_HEIGHT
@@ -36,12 +37,13 @@ struct indicator_handle
  * Helper function to set the colour of a given neopixel. Main reason is to allow for configuration
  * of a global brightness setting.
  */
-static void set_colour(tNeopixel *pixel, enum indicator_colour_specifier colour)
+static void set_colour(tNeopixel *pixel, enum indicator_colour_specifier colour, uint8_t brightness)
 {
-    uint8_t brightness_denominator = BRIGHTNESS_DENOMINATOR;
-    pixel->rgb = NP_RGB(colours[colour].red / brightness_denominator,
-                        colours[colour].green / brightness_denominator,
-                        colours[colour].blue / brightness_denominator);
+    brightness = (brightness > 100) ? 100 : brightness;
+
+    pixel->rgb =
+        NP_RGB((colours[colour].red * brightness) / 100, (colours[colour].green * brightness) / 100,
+               (colours[colour].blue * brightness) / 100);
 }
 
 bool indicator_init(gpio_num_t data_pin)
@@ -71,6 +73,7 @@ static void update_row(uint8_t row_idx, enum indicator_colour_specifier colour, 
 {
     uint32_t pos_offset = row_idx * MATRIX_WIDTH;
     uint32_t num_lit_positions = (percent * MATRIX_WIDTH) / 100;
+    uint32_t remainder = (percent * MATRIX_WIDTH) % 100;
 
     // Determine the direction of iteration
     int start =
@@ -83,11 +86,16 @@ static void update_row(uint8_t row_idx, enum indicator_colour_specifier colour, 
         if (num_lit_positions > 0)
         {
             num_lit_positions--;
-            set_colour(&indicator.pixels[ii + pos_offset], colour);
+            set_colour(&indicator.pixels[ii + pos_offset], colour, FULL_BRIGHTNESS);
+        }
+        else if (remainder)
+        {
+            remainder = 0;
+            set_colour(&indicator.pixels[ii + pos_offset], colour, PARTIAL_BRIGHTNESS);
         }
         else
         {
-            set_colour(&indicator.pixels[ii + pos_offset], BLACK);
+            set_colour(&indicator.pixels[ii + pos_offset], BLACK, 100);
         }
     }
 }
@@ -105,6 +113,11 @@ bool indicator_set_row(uint8_t row_idx, enum indicator_colour_specifier colour, 
         ESP_LOGE(TAG, "Row index (%u) exceeds maxium allowed value (%u)\n", row_idx,
                  MATRIX_HEIGHT - 1);
         return false;
+    }
+
+    if (percent > 100)
+    {
+        percent = 100;
     }
 
     update_row(row_idx, colour, percent);
@@ -130,7 +143,7 @@ bool indicator_set_status(uint8_t status_idx, enum indicator_colour_specifier co
 
     for (int ii = MATRIX_WIDTH - 1; num_pixels; ii--, num_pixels--)
     {
-        set_colour(&indicator.pixels[ii - pos_offset], colour);
+        set_colour(&indicator.pixels[ii - pos_offset], colour, FULL_BRIGHTNESS);
     }
 
     return neopixel_SetPixel(indicator.neopixel, indicator.pixels, PIXEL_COUNT);
