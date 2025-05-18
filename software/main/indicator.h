@@ -11,7 +11,6 @@ enum indicator_colour_specifier
     BLUE,
     YELLOW,
     CYAN,
-    MAGENTA,
     WHITE,
     ORANGE,
     PURPLE,

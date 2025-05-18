@@ -70,12 +70,6 @@ menu "Power Indicator"
 
     orsource "$IDF_PATH/examples/common_components/env_caps/$IDF_TARGET/Kconfig.env_caps"
 
-    config AMBER_API_KEY
-        string "Amber API Key"
-        default "psk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        help
-            Insert the API token created at https://app.amber.com.au/developers
-
     config POWER_INDICATOR_DATA_PIN
         int "Data pin for ws2182b LEDs"
         range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
@@ -83,28 +77,56 @@ menu "Power Indicator"
         help
             GPIO to use as a Data pin for ws2182b LED strip.
 
+    config ENERGY_TOPIC
+        string "Energy Topic to subscribe to."
+        default "/homeassistant/energy"
+        help
+            This is the topic the MQTT client will listen on for enery updates.
+
+    menu "Broker Configuration"
+
+        config BROKER_URL
+            string "Broker URL"
+            default "mqtt://mqtt.eclipseprojects.io"
+            help
+                URL of the broker to connect to
+
+        config BROKER_USERNAME
+            string "Broker Username"
+            default "admin"
+            help
+                Username for MQTT broker authentication. Leaving this blank will use no username.
+
+        config BROKER_PASSWORD
+            string "Broker Password"
+            default "admin"
+            help
+                Password for MQTT broker authentication. Leaving this blank will use no password.
+
+    endmenu
+
     menu "LED Matrix Module Configuration"
 
-    config LED_MATRIX_WIDTH
-        int "Matrix Width"
-        range 1 32
-        default 8
-        help
-            Specify the width of the LED matrix in pixels. The valid range is 1 to 32.
+        config LED_MATRIX_WIDTH
+            int "Matrix Width"
+            range 1 32
+            default 8
+            help
+                Specify the width of the LED matrix in pixels. The valid range is 1 to 32.
 
-    config LED_MATRIX_HEIGHT
-        int "Matrix Height"
-        range 1 32
-        default 8
-        help
-            Specify the height of the LED matrix in pixels. The valid range is 1 to 32.
+        config LED_MATRIX_HEIGHT
+            int "Matrix Height"
+            range 1 32
+            default 8
+            help
+                Specify the height of the LED matrix in pixels. The valid range is 1 to 32.
 
-    config LED_MATRIX_STATUS_SEGMENTS
-        int "Status Segments"
-        range 1 LED_MATRIX_WIDTH
-        default 4
-        help
-            Specify the number of status segments. This value cannot exceed the matrix width.
+        config LED_MATRIX_STATUS_SEGMENTS
+            int "Status Segments"
+            range 1 LED_MATRIX_WIDTH
+            default 4
+            help
+                Specify the number of status segments. This value cannot exceed the matrix width.
 
     endmenu
 
